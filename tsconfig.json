@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "types": [
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "module": "commonjs",
+    //移除注释
+    "removeComments": true,
+    //强制严格模式
+    "alwaysStrict": true,
+    "target": "es6",
+    "lib": [
+      "es6"
+    ],
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
