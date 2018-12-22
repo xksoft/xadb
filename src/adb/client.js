@@ -1,7 +1,14 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require('debug')('adb:client');
-const Promise = require("bluebird");
 const Connection = require('./connection');
 const Sync = require('./sync');
 const Parser = require('./parser');
@@ -46,119 +53,131 @@ const GetStateCommand = require('./command/host-serial/getstate');
 const ListForwardsCommand = require('./command/host-serial/listforwards');
 const WaitForDeviceCommand = require('./command/host-serial/waitfordevice');
 const TcpUsbServer = require('./tcpusb/server');
-var Client = (function () {
-    let NoUserOptionError = undefined;
-    Client = class Client {
-        constructor(options) {
-            this.options = { port: 5037, bin: 'adb' };
-            this.options = options;
-            if (!this.options.port) {
-                this.options.port = 5037;
-            }
-            if (!this.options.bin) {
-                this.options.bin = 'adb';
-            }
+class Client {
+    constructor(options) {
+        this.NoUserOptionError = undefined;
+        this.options = { port: 5037, bin: 'adb' };
+        this.NoUserOptionError = err => err.message.indexOf('--user') !== -1;
+        this.options = options;
+        if (!this.options.port) {
+            this.options.port = 5037;
         }
-        static initClass() {
-            NoUserOptionError = err => err.message.indexOf('--user') !== -1;
+        if (!this.options.bin) {
+            this.options.bin = 'adb';
         }
-        createTcpUsbBridge(serial, options) {
-            return new TcpUsbServer(this, serial, options);
-        }
-        connection() {
-            let connectListener, errorListener;
-            const resolver = Promise.defer();
-            var conn = new Connection(this.options)
-                .on('error', (errorListener = err => resolver.reject(err))).on('connect', (connectListener = () => resolver.resolve(conn))).connect();
-            return resolver.promise.finally(function () {
-                conn.removeListener('error', errorListener);
-                return conn.removeListener('connect', connectListener);
+    }
+    createTcpUsbBridge(serial, options) {
+        return new TcpUsbServer(this, serial, options);
+    }
+    connection() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let conn = yield new Promise((resolve, reject) => {
+                let my_conn = new Connection(this.options)
+                    .on('error', (err => reject(err))).on('connect', (() => resolve(my_conn))).connect();
             });
-        }
-        version(callback) {
+            conn.removeAllListeners();
+            return conn;
+        });
+    }
+    version() {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new HostVersionCommand(conn)
-                .execute()).nodeify(callback);
-        }
-        connect(host, port = 5555, callback) {
-            if (typeof port === 'function') {
-                callback = port;
-                port = 5555;
-            }
+                .execute());
+        });
+    }
+    connect(host, port = 5555) {
+        return __awaiter(this, void 0, void 0, function* () {
             if (host.indexOf(':') !== -1) {
                 [host, port] = Array.from(host.split(':', 2));
             }
             return this.connection()
                 .then(conn => new HostConnectCommand(conn)
-                .execute(host, port)).nodeify(callback);
-        }
-        disconnect(host, port = 5555, callback) {
-            if (typeof port === 'function') {
-                callback = port;
-                port = 5555;
-            }
+                .execute(host, port));
+        });
+    }
+    disconnect(host, port = 5555) {
+        return __awaiter(this, void 0, void 0, function* () {
             if (host.indexOf(':') !== -1) {
                 [host, port] = Array.from(host.split(':', 2));
             }
             return this.connection()
                 .then(conn => new HostDisconnectCommand(conn)
-                .execute(host, port)).nodeify(callback);
-        }
-        listDevices(callback) {
+                .execute(host, port));
+        });
+    }
+    listDevices() {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new HostDevicesCommand(conn)
-                .execute()).nodeify(callback);
-        }
-        listDevicesWithPaths(callback) {
+                .execute());
+        });
+    }
+    listDevicesWithPaths() {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new HostDevicesWithPathsCommand(conn)
-                .execute()).nodeify(callback);
-        }
-        trackDevices(callback) {
+                .execute());
+        });
+    }
+    trackDevices() {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new HostTrackDevicesCommand(conn)
-                .execute()).nodeify(callback);
-        }
-        kill(callback) {
+                .execute());
+        });
+    }
+    kill() {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new HostKillCommand(conn)
-                .execute()).nodeify(callback);
-        }
-        getSerialNo(serial, callback) {
+                .execute());
+        });
+    }
+    getSerialNo(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new GetSerialNoCommand(conn)
-                .execute(serial)).nodeify(callback);
-        }
-        getDevicePath(serial, callback) {
+                .execute(serial));
+        });
+    }
+    getDevicePath(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new GetDevicePathCommand(conn)
-                .execute(serial)).nodeify(callback);
-        }
-        getState(serial, callback) {
+                .execute(serial));
+        });
+    }
+    getState(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new GetStateCommand(conn)
-                .execute(serial)).nodeify(callback);
-        }
-        getProperties(serial, callback) {
+                .execute(serial));
+        });
+    }
+    getProperties(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new GetPropertiesCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        getFeatures(serial, callback) {
+                .execute());
+        });
+    }
+    getFeatures(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new GetFeaturesCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        getPackages(serial, callback) {
+                .execute());
+        });
+    }
+    getPackages(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new GetPackagesCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        getDHCPIpAddress(serial, iface = 'wlan0', callback) {
-            if (typeof iface === 'function') {
-                callback = iface;
-                iface = 'wlan0';
-            }
+                .execute());
+        });
+    }
+    getDHCPIpAddress(serial, iface = 'wlan0') {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.getProperties(serial)
                 .then(function (properties) {
                 let ip;
@@ -167,69 +186,88 @@ var Client = (function () {
                 }
                 throw new Error(`Unable to find ipaddress for '${iface}'`);
             });
-        }
-        forward(serial, local, remote, callback) {
+        });
+    }
+    forward(serial, local, remote) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new ForwardCommand(conn)
-                .execute(serial, local, remote)).nodeify(callback);
-        }
-        listForwards(serial, callback) {
+                .execute(serial, local, remote));
+        });
+    }
+    listForwards(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new ListForwardsCommand(conn)
-                .execute(serial)).nodeify(callback);
-        }
-        reverse(serial, remote, local, callback) {
+                .execute(serial));
+        });
+    }
+    reverse(serial, remote, local) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new ReverseCommand(transport)
-                .execute(remote, local)
-                .nodeify(callback));
-        }
-        listReverses(serial, callback) {
+                .execute(remote, local));
+        });
+    }
+    listReverses(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new ListReversesCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        transport(serial, callback) {
+                .execute());
+        });
+    }
+    transport(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new HostTransportCommand(conn)
                 .execute(serial)
-                .return(conn)).nodeify(callback);
-        }
-        shell(serial, command, callback) {
+                .return(conn));
+        });
+    }
+    shell(serial, command) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new ShellCommand(transport)
-                .execute(command)).nodeify(callback);
-        }
-        reboot(serial, callback) {
+                .execute(command));
+        });
+    }
+    reboot(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new RebootCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        remount(serial, callback) {
+                .execute());
+        });
+    }
+    remount(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new RemountCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        root(serial, callback) {
+                .execute());
+        });
+    }
+    root(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new RootCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        trackJdwp(serial, callback) {
+                .execute());
+        });
+    }
+    trackJdwp(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new TrackJdwpCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        framebuffer(serial, format = 'raw', callback) {
-            if (typeof format === 'function') {
-                callback = format;
-                format = 'raw';
-            }
+                .execute());
+        });
+    }
+    framebuffer(serial, format = 'raw') {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new FrameBufferCommand(transport)
-                .execute(format)).nodeify(callback);
-        }
-        screencap(serial, callback) {
+                .execute(format));
+        });
+    }
+    screencap(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => {
                 return new ScreencapCommand(transport)
@@ -238,53 +276,57 @@ var Client = (function () {
                     debug(`Emulating screencap command due to '${err}'`);
                     return this.framebuffer(serial, 'png');
                 });
-            }).nodeify(callback);
-        }
-        openLocal(serial, path, callback) {
+            });
+        });
+    }
+    openLocal(serial, path) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new LocalCommand(transport)
-                .execute(path)).nodeify(callback);
-        }
-        openLog(serial, name, callback) {
+                .execute(path));
+        });
+    }
+    openLog(serial, name) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new LogCommand(transport)
-                .execute(name)).nodeify(callback);
-        }
-        openTcp(serial, port, host, callback) {
-            if (typeof host === 'function') {
-                callback = host;
-                host = undefined;
-            }
+                .execute(name));
+        });
+    }
+    openTcp(serial, port, host) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new TcpCommand(transport)
-                .execute(port, host)).nodeify(callback);
-        }
-        openProcStat(serial, callback) {
+                .execute(port, host));
+        });
+    }
+    openProcStat(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.syncService(serial)
-                .then(sync => new ProcStat(sync)).nodeify(callback);
-        }
-        clear(serial, pkg, callback) {
+                .then(sync => new ProcStat(sync));
+        });
+    }
+    clear(serial, pkg) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new ClearCommand(transport)
-                .execute(pkg)).nodeify(callback);
-        }
-        install(serial, apk, callback) {
-            const temp = Sync.temp(typeof apk === 'string' ? apk : '_stream.apk');
-            return this.push(serial, apk, temp)
-                .then(transfer => {
-                let endListener, errorListener;
-                const resolver = Promise.defer();
-                transfer.on('error', (errorListener = err => resolver.reject(err)));
-                transfer.on('end', (endListener = () => {
-                    return resolver.resolve(this.installRemote(serial, temp));
-                }));
-                return resolver.promise.finally(function () {
-                    transfer.removeListener('error', errorListener);
-                    return transfer.removeListener('end', endListener);
-                });
-            }).nodeify(callback);
-        }
-        installRemote(serial, apk, callback) {
+                .execute(pkg));
+        });
+    }
+    install(serial, apk) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let temp = Sync.temp(typeof apk === 'string' ? apk : '_stream.apk');
+            let work = yield new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                let transfer = yield this.push(serial, apk, temp);
+                transfer.on('error', (err => reject(err)));
+                transfer.on('end', (() => resolve(this.installRemote(serial, temp))));
+            }));
+            work.removeAllListeners();
+            return work;
+        });
+    }
+    installRemote(serial, apk) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => {
                 return new InstallCommand(transport)
@@ -294,95 +336,117 @@ var Client = (function () {
                 })
                     .then(stream => new Parser(stream)
                     .readAll()).then(out => true);
-            }).nodeify(callback);
-        }
-        uninstall(serial, pkg, callback) {
+            });
+        });
+    }
+    uninstall(serial, pkg) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new UninstallCommand(transport)
-                .execute(pkg)).nodeify(callback);
-        }
-        isInstalled(serial, pkg, callback) {
+                .execute(pkg));
+        });
+    }
+    isInstalled(serial, pkg) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new IsInstalledCommand(transport)
-                .execute(pkg)).nodeify(callback);
-        }
-        startActivity(serial, options, callback) {
-            return this.transport(serial)
-                .then(transport => new StartActivityCommand(transport)
-                .execute(options)).catch(NoUserOptionError, () => {
+                .execute(pkg));
+        });
+    }
+    startActivity(serial, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return this.transport(serial)
+                    .then(transport => new StartActivityCommand(transport)
+                    .execute(options));
+            }
+            catch (e) {
                 options.user = null;
                 return this.startActivity(serial, options);
-            }).nodeify(callback);
-        }
-        startService(serial, options, callback) {
-            return this.transport(serial)
-                .then(function (transport) {
-                if (!options.user && (options.user !== null)) {
-                    options.user = 0;
-                }
-                return new StartServiceCommand(transport)
-                    .execute(options);
-            }).catch(NoUserOptionError, () => {
+            }
+        });
+    }
+    startService(serial, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return this.transport(serial)
+                    .then(function (transport) {
+                    if (!options.user && (options.user !== null)) {
+                        options.user = 0;
+                    }
+                    return new StartServiceCommand(transport)
+                        .execute(options);
+                });
+            }
+            catch (e) {
                 options.user = null;
                 return this.startService(serial, options);
-            }).nodeify(callback);
-        }
-        syncService(serial, callback) {
+            }
+        });
+    }
+    syncService(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new SyncCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        stat(serial, path, callback) {
+                .execute());
+        });
+    }
+    stat(serial, path) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.syncService(serial)
                 .then(sync => sync.stat(path)
-                .finally(() => sync.end())).nodeify(callback);
-        }
-        readdir(serial, path, callback) {
+                .finally(() => sync.end()));
+        });
+    }
+    readdir(serial, path) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.syncService(serial)
                 .then(sync => sync.readdir(path)
-                .finally(() => sync.end())).nodeify(callback);
-        }
-        pull(serial, path, callback) {
+                .finally(() => sync.end()));
+        });
+    }
+    pull(serial, path) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.syncService(serial)
                 .then(sync => sync.pull(path)
-                .on('end', () => sync.end())).nodeify(callback);
-        }
-        push(serial, contents, path, mode, callback) {
-            if (typeof mode === 'function') {
-                callback = mode;
-                mode = undefined;
-            }
+                .on('end', () => sync.end()));
+        });
+    }
+    push(serial, contents, path, mode) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.syncService(serial)
                 .then(sync => sync.push(contents, path, mode)
-                .on('end', () => sync.end())).nodeify(callback);
-        }
-        tcpip(serial, port = 5555, callback) {
-            if (typeof port === 'function') {
-                callback = port;
-                port = 5555;
-            }
+                .on('end', () => sync.end()));
+        });
+    }
+    tcpip(serial, port = 5555) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new TcpIpCommand(transport)
-                .execute(port)).nodeify(callback);
-        }
-        usb(serial, callback) {
+                .execute(port));
+        });
+    }
+    usb(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new UsbCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        waitBootComplete(serial, callback) {
+                .execute());
+        });
+    }
+    waitBootComplete(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.transport(serial)
                 .then(transport => new WaitBootCompleteCommand(transport)
-                .execute()).nodeify(callback);
-        }
-        waitForDevice(serial, callback) {
+                .execute());
+        });
+    }
+    waitForDevice(serial) {
+        return __awaiter(this, void 0, void 0, function* () {
             return this.connection()
                 .then(conn => new WaitForDeviceCommand(conn)
-                .execute(serial)).nodeify(callback);
-        }
-    };
-    Client.initClass();
-    return Client;
-})();
-module.exports = Client;
+                .execute(serial));
+        });
+    }
+}
+exports.Client = Client;
 //# sourceMappingURL=client.js.map

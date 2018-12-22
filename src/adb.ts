@@ -1,10 +1,10 @@
-const Client = require('./adb/client')
 import Keycode = require('./adb/keycode');
 
 import util = require('./adb/util');
+import {Client} from "./adb/client";
 
 export class adb {
-    static createClient(options: any = {}) {
+    static createClient(options: any = {}): Client {
         if (!options.host) {
             options.host = process.env.ADB_HOST
         }

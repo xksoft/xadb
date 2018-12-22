@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Client = require('./adb/client');
 const Keycode = require("./adb/keycode");
 const util = require("./adb/util");
+const client_1 = require("./adb/client");
 class adb {
     static createClient(options = {}) {
         if (!options.host) {
@@ -11,7 +11,7 @@ class adb {
         if (!options.port) {
             options.port = process.env.ADB_PORT;
         }
-        return new Client(options);
+        return new client_1.Client(options);
     }
 }
 adb.Keycode = Keycode.keycode;
