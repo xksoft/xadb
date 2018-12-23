@@ -7,7 +7,7 @@
 const debug = require('debug')('adb:command');
 
 const Parser = require('./parser');
-import {Protocol} from './protocol';
+const Protocol = require('./Protocol');
 
 var Command = (function () {
     let RE_SQUOT = undefined;

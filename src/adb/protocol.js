@@ -1,18 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class Protocol {
-    constructor() {
-        this.OKAY = 'OKAY';
-        this.FAIL = 'FAIL';
-        this.STAT = 'STAT';
-        this.LIST = 'LIST';
-        this.DENT = 'DENT';
-        this.RECV = 'RECV';
-        this.DATA = 'DATA';
-        this.DONE = 'DONE';
-        this.SEND = 'SEND';
-        this.QUIT = 'QUIT';
-    }
     static decodeLength(length) {
         return parseInt(length, 16);
     }
@@ -26,5 +13,15 @@ class Protocol {
         return Buffer.concat([new Buffer(Protocol.encodeLength(data.length)), data]);
     }
 }
-exports.Protocol = Protocol;
+Protocol.OKAY = 'OKAY';
+Protocol.FAIL = 'FAIL';
+Protocol.STAT = 'STAT';
+Protocol.LIST = 'LIST';
+Protocol.DENT = 'DENT';
+Protocol.RECV = 'RECV';
+Protocol.DATA = 'DATA';
+Protocol.DONE = 'DONE';
+Protocol.SEND = 'SEND';
+Protocol.QUIT = 'QUIT';
+module.exports = Protocol;
 //# sourceMappingURL=protocol.js.map

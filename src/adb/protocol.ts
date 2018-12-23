@@ -1,14 +1,14 @@
-export class Protocol {
-    OKAY = 'OKAY';
-    FAIL = 'FAIL';
-    STAT = 'STAT';
-    LIST = 'LIST';
-    DENT = 'DENT';
-    RECV = 'RECV';
-    DATA = 'DATA';
-    DONE = 'DONE';
-    SEND = 'SEND';
-    QUIT = 'QUIT';
+class Protocol {
+    static OKAY = 'OKAY';
+    static FAIL = 'FAIL';
+    static STAT = 'STAT';
+    static LIST = 'LIST';
+    static DENT = 'DENT';
+    static RECV = 'RECV';
+    static DATA = 'DATA';
+    static DONE = 'DONE';
+    static SEND = 'SEND';
+    static QUIT = 'QUIT';
 
     static decodeLength(length) {
         return parseInt(length, 16)
@@ -26,3 +26,4 @@ export class Protocol {
     }
 }
 
+export = Protocol;
