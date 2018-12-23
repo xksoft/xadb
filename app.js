@@ -12,8 +12,12 @@ const xadb = require("./index");
 let client = xadb.adb.createClient();
 function monitor() {
     return __awaiter(this, void 0, void 0, function* () {
-        let version = yield client.listDevices();
+        let version = yield client.version();
         console.log(version);
+        let listDevicesWithPaths = yield client.listDevicesWithPaths();
+        console.log(listDevicesWithPaths);
+        let Properties = yield client.getProperties(listDevicesWithPaths[0].id);
+        console.log(Properties);
     });
 }
 monitor();

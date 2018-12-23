@@ -6,8 +6,12 @@ let client = xadb.adb.createClient();
 
 async function monitor() {
 
-    let version = await client.listDevices();
+    let version = await client.version();
     console.log(version);
+    let listDevicesWithPaths = await client.listDevicesWithPaths();
+    console.log(listDevicesWithPaths);
+    let Properties = await client.getProperties(listDevicesWithPaths[0].id);
+    console.log(Properties);
     // return client
     //     .listDevicesWithPaths()
     //     .then(async function (devicelist) {

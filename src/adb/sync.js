@@ -295,7 +295,7 @@ var Sync = (function() {
 
     _sendCommandWithLength(cmd, length) {
       if (cmd !== Protocol.DATA) { debug(cmd) }
-      const payload = new Buffer(cmd.length + 4)
+      const payload = Buffer.alloc(cmd.length + 4)
       payload.write(cmd, 0, cmd.length)
       payload.writeUInt32LE(length, cmd.length)
       return this.connection.write(payload)
@@ -303,7 +303,7 @@ var Sync = (function() {
 
     _sendCommandWithArg(cmd, arg) {
       debug(`${cmd} ${arg}`)
-      const payload = new Buffer(cmd.length + 4 + arg.length)
+      const payload = Buffer.alloc(cmd.length + 4 + arg.length)
       let pos = 0
       payload.write(cmd, pos, cmd.length)
       pos += cmd.length
