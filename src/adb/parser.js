@@ -53,7 +53,7 @@ Parser = (function() {
 
   Parser.prototype.readAll = function() {
     var all, endListener, errorListener, resolver, tryRead;
-    all = new Buffer(0);
+    all = Buffer.alloc(0);
     resolver = Promise.defer();
     tryRead = (function(_this) {
       return function() {
@@ -109,7 +109,7 @@ Parser = (function() {
             return resolver.reject(new Parser.PrematureEOFError(howMany));
           }
         } else {
-          return resolver.resolve(new Buffer(0));
+          return resolver.resolve(Buffer.alloc(0));
         }
       };
     })(this);
@@ -197,7 +197,7 @@ Parser = (function() {
 
   Parser.prototype.readUntil = function(code) {
     var read, skipped;
-    skipped = new Buffer(0);
+    skipped = Buffer.alloc(0);
     read = (function(_this) {
       return function() {
         return _this.readBytes(1).then(function(chunk) {

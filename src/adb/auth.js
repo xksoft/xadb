@@ -42,7 +42,7 @@ Auth = (function() {
       throw new Error("Invalid public key");
     }
     offset += 4;
-    n = new Buffer(len);
+    n = Buffer.alloc(len);
     struct.copy(n, 0, offset, offset + len);
     [].reverse.call(n);
     offset += len;
@@ -63,7 +63,7 @@ Auth = (function() {
     return new Promise(function(resolve, reject) {
       var comment, match, struct;
       if (match = RE.exec(buffer)) {
-        struct = new Buffer(match[1], 'base64');
+        struct = Buffer.from(match[1], 'base64');
         comment = match[2];
         return resolve(readPublicKeyFromStruct(struct, comment));
       } else {

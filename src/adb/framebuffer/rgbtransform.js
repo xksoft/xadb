@@ -12,7 +12,7 @@ RgbTransform = (function(superClass) {
 
   function RgbTransform(meta, options) {
     this.meta = meta;
-    this._buffer = new Buffer('');
+    this._buffer = Buffer.from('');
     Assert.ok(this.meta.bpp === 24 || this.meta.bpp === 32, 'Only 24-bit and 32-bit raw images with 8-bits per color are supported');
     this._r_pos = this.meta.red_offset / 8;
     this._g_pos = this.meta.green_offset / 8;
@@ -31,7 +31,7 @@ RgbTransform = (function(superClass) {
     }
     sourceCursor = 0;
     targetCursor = 0;
-    target = this._pixel_bytes === 3 ? this._buffer : new Buffer(Math.max(4, chunk.length / this._pixel_bytes * 3));
+    target = this._pixel_bytes === 3 ? this._buffer : Buffer.alloc(Math.max(4, chunk.length / this._pixel_bytes * 3));
     while (this._buffer.length - sourceCursor >= this._pixel_bytes) {
       r = this._buffer[sourceCursor + this._r_pos];
       g = this._buffer[sourceCursor + this._g_pos];

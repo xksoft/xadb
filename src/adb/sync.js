@@ -302,7 +302,7 @@ Sync = (function(superClass) {
     if (cmd !== Protocol.DATA) {
       debug(cmd);
     }
-    payload = new Buffer(cmd.length + 4);
+    payload = Buffer.alloc(cmd.length + 4);
     payload.write(cmd, 0, cmd.length);
     payload.writeUInt32LE(length, cmd.length);
     return this.connection.write(payload);
@@ -311,7 +311,7 @@ Sync = (function(superClass) {
   Sync.prototype._sendCommandWithArg = function(cmd, arg) {
     var payload, pos;
     debug(cmd + " " + arg);
-    payload = new Buffer(cmd.length + 4 + arg.length);
+    payload = Buffer.alloc(cmd.length + 4 + arg.length);
     pos = 0;
     payload.write(cmd, pos, cmd.length);
     pos += cmd.length;

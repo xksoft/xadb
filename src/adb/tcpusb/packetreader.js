@@ -50,7 +50,7 @@ PacketReader = (function(superClass) {
             break;
           }
           header = this._consume(24);
-          this.packet = new Packet(header.readUInt32LE(0), header.readUInt32LE(4), header.readUInt32LE(8), header.readUInt32LE(12), header.readUInt32LE(16), header.readUInt32LE(20), new Buffer(0));
+          this.packet = new Packet(header.readUInt32LE(0), header.readUInt32LE(4), header.readUInt32LE(8), header.readUInt32LE(12), header.readUInt32LE(16), header.readUInt32LE(20), Buffer.alloc(0));
           if (!this.packet.verifyMagic()) {
             this.emit('error', new PacketReader.MagicError(this.packet));
             return;

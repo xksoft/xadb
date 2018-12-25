@@ -276,7 +276,7 @@ Socket = (function(superClass) {
         }
         return results;
       })()).join('');
-      return new Buffer("device::" + id + "\0");
+      return Buffer.from("device::" + id + "\0");
     });
   };
 

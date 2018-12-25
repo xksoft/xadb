@@ -34,9 +34,9 @@ Protocol = (function() {
 
   Protocol.encodeData = function(data) {
     if (!Buffer.isBuffer(data)) {
-      data = new Buffer(data);
+      data = Buffer.from(data);
     }
-    return Buffer.concat([new Buffer(Protocol.encodeLength(data.length)), data]);
+    return Buffer.concat([Buffer.from(Protocol.encodeLength(data.length)), data]);
   };
 
   return Protocol;

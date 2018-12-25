@@ -35,7 +35,7 @@ Packet = (function() {
   Packet.assemble = function(command, arg0, arg1, data) {
     var chunk;
     if (data) {
-      chunk = new Buffer(24 + data.length);
+      chunk = Buffer.alloc(24 + data.length);
       chunk.writeUInt32LE(command, 0);
       chunk.writeUInt32LE(arg0, 4);
       chunk.writeUInt32LE(arg1, 8);
@@ -45,7 +45,7 @@ Packet = (function() {
       data.copy(chunk, 24);
       return chunk;
     } else {
-      chunk = new Buffer(24);
+      chunk = Buffer.alloc(24);
       chunk.writeUInt32LE(command, 0);
       chunk.writeUInt32LE(arg0, 4);
       chunk.writeUInt32LE(arg1, 8);
@@ -58,7 +58,7 @@ Packet = (function() {
 
   Packet.swap32 = function(n) {
     var buffer;
-    buffer = new Buffer(4);
+    buffer = Buffer.alloc(4);
     buffer.writeUInt32LE(n, 0);
     return buffer.readUInt32BE(0);
   };
