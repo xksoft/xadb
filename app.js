@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const xadb = require("./index");
+const stream = require("stream");
 let client = xadb.adb.createClient();
 function monitor() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -18,6 +19,11 @@ function monitor() {
         console.log(listDevicesWithPaths);
         let Properties = yield client.getProperties(listDevicesWithPaths[0].id);
         console.log(Properties);
+        let a = new stream.PassThrough();
+        yield client.push(listDevicesWithPaths[0].id, a, "/sdcard/aa.txt");
+        a.write("aaaa");
+        a.end();
+        return { errcode: 0, msg: "写入完毕" };
     });
 }
 monitor();

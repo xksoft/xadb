@@ -1,6 +1,6 @@
 {
   "name": "xadb",
-  "version": "0.3.6",
+  "version": "0.3.11",
   "main": "./index",
   "scripts": {
     "tsc": "tsc"
