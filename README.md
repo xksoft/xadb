@@ -1,2 +1,2 @@
 "# xadb" 
-xadb is a pure Node.js client for the Android Debug Bridge server. It can be used either as a library in your own application, or simply as a convenient utility for playing with your device.
+xadb是一套基于node.js的adb客户端，方便在node环境下于adb server交互
